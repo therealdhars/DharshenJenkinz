@@ -1,28 +1,33 @@
-
 pipeline {
     agent any
-
-    tools {
-      
-        maven "Maven 3.9.3"
-    }
 
     stages {
         stage('Build') {
             steps {
-                
                 git 'https://github.com/therealdhars/DharshenJenkinz.git'
-
-                
-                sh "mvn -Dmaven.test.failure.ignore=true clean package"
-
-
+                sh './mvnw clean compile'
+                // bat '.\\mvnw clean compile'
+            }
+        }
+        stage('Test') {
+            steps {
+                sh './mvnw test'
+                // bat '.\\mvnw test'
             }
 
             post {
-            
-                success {
+                always {
                     junit '**/target/surefire-reports/TEST-*.xml'
+                }
+            }
+        }
+        stage('Publish') {
+            steps {
+                sh './mvnw package'
+                // bat '.\\mvnw package'
+            }
+            post {
+                success {
                     archiveArtifacts 'target/*.jar'
                 }
             }
