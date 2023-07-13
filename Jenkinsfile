@@ -1,36 +1,36 @@
-pipeline {
+pipeline{
     agent any
-
-    stages {
-        stage('Build') {
-            steps {
-                git 'https://github.com/therealdhars/DharshenJenkinz.git'
-                sh './mvnw clean compile'
-                // bat '.\\mvnw clean compile'
+    stages{
+        stage("Build"){
+            
+            steps{
+                echo "Building"
             }
         }
-        stage('Test') {
-            steps {
-                sh './mvnw test'
-                // bat '.\\mvnw test'
+        
+        
+             stage("Test"){
+            steps{
+                echo "Testing"
             }
-
-            post {
-                always {
-                    junit '**/target/surefire-reports/TEST-*.xml'
-                }
+             }
+             
+             
+             
+             stage("Deploy"){
+            steps{
+                echo "Deploying"
             }
         }
-        stage('Publish') {
-            steps {
-                sh './mvnw package'
-                // bat '.\\mvnw package'
-            }
-            post {
-                success {
-                    archiveArtifacts 'target/*.jar'
-                }
-            }
+    }
+    
+    
+    post
+    {
+        
+         always
+        {
+            emailext body: 'Summary', subject: 'Pipeline Status', to: 'dharshen4demo@gmail.com'
         }
     }
 }
