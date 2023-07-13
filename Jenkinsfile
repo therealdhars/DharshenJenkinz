@@ -1,36 +1,31 @@
-pipeline{
+
+pipeline {
     agent any
-    stages{
-        stage("Build"){
-            
-            steps{
-                echo "Building"
-            }
-        }
-        
-        
-             stage("Test"){
-            steps{
-                echo "Testing"
-            }
-             }
-             
-             
-             
-             stage("Deploy"){
-            steps{
-                echo "Deploying"
-            }
-        }
+
+    tools {
+      
+        maven "Maven 3.9.3"
     }
-    
-    
-    post
-    {
-        
-         always
-        {
-            emailext body: 'Summary', subject: 'Pipeline Status', to: 'dharshen4demo@gmail.com'
+
+    stages {
+        stage('Build') {
+            steps {
+                
+                git 'https://github.com/therealdhars/DharshenJenkinz.git'
+
+                
+                sh "mvn -Dmaven.test.failure.ignore=true clean package"
+
+
+            }
+
+            post {
+            
+                success {
+                    junit '**/target/surefire-reports/TEST-*.xml'
+                    archiveArtifacts 'target/*.jar'
+                }
+            }
         }
     }
 }
